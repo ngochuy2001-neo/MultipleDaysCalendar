@@ -62,7 +62,6 @@ nextMonthBtn.addEventListener("click", () => {
   }
   console.log(currentMonth)
   renderCalendar(currentMonth, headerYear);
-  addEventBtn();
 })
 
 //Previous Month
@@ -74,6 +73,42 @@ previousMonthBtn.addEventListener("click", ()=>{
   }
   console.log(currentMonth)
   renderCalendar(currentMonth, headerYear);
-  addEventBtn();
 })
+
+let selectedDay = []
+
+let dateBtn = document.getElementsByClassName("day");
+
+function indexOfValue(arr, value) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].date === value.date && arr[i].month === value.month && arr[i].year === value.year) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+const choiceHandle = () =>{
+  Array.from(dateBtn).forEach((element) =>{
+    if(!element.classList.contains("inactive")){
+      element.addEventListener("click", (event) =>{
+        let dateForm =  {date: event.target.innerHTML, month: currentMonth, year: headerYear}
+        let index = indexOfValue(selectedDay,dateForm);
+        console.log(index)
+        if(index === -1){
+          selectedDay.push(dateForm)
+        }
+        else {
+          selectedDay.splice(index, 1);
+        }
+        if(selectedDay.length > 2){
+          selectedDay.shift();
+        }
+        console.log(selectedDay)
+      })
+    }
+  })
+}
+
+choiceHandle()
 
