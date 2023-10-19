@@ -1,0 +1,150 @@
+* {
+  padding: 0px;
+  margin: 0px;
+}
+body{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to right, #ff86ef, rgb(124, 243, 252));
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+}
+
+.calendar{
+  width: 300px;
+  background-color: white;
+  height: 300px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 5px 0px;
+  position: absolute;
+  transform: translateY(-70%);
+}
+
+#calendarHeader{
+  width: 100% -5px;
+  height: 10%;
+  padding-left: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#calendarCurrentDate{
+  align-items: center;
+  font-weight: bold;
+  font-family: 'Roboto';
+}
+
+#changeTimeButtons{
+  padding-right: 5px;
+  height: 100%;
+  width: 60px;
+  display: flex;
+}
+
+#changeTimeButtons div{
+  height: 30px;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  border-radius: 100%;
+  justify-content: center;
+  transition: background-color 0.2 ease;
+}
+
+#changeTimeButtons div:hover{
+  background-color: rgb(196, 196, 196);
+}
+
+.inputForm{
+  display: flex;
+}
+#dateBox{
+  width: 250px;
+  height: 50px;
+  background-color: white;
+  border: 1px solid black;
+  text-align: center;
+  line-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+
+.showCalendar{
+  width: 50px;
+  height: 50px;
+}
+
+#calendarMain{
+}
+
+#calendarMain ul{
+  list-style-type: none; 
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto auto;
+}
+
+#calendarMain .weekday{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  color: gray;
+}
+
+#calendarMain #dayList{
+  height: 80%;
+  width: 100%;
+}
+
+#calendarMain #dayList .day{
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+#calendarMain #dayList .active{
+  background-color: red;
+  color: white;
+  border-radius: 100%;
+}
+
+
+#calendarMain #dayList .inactive{
+  color: rgb(201, 198, 198);
+}
+
+#calendarMain #dayList .day:hover{
+  background-color: gray;
+  border-radius: 100%;
+}
+
+.calendarFooter{
+  width: 100%;
+  height: 90px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.calendarFooter label{
+  margin-right: 10px;
+}
+
+.multipleChoiceCheckbox{
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+}
+
