@@ -75,7 +75,8 @@ previousMonthBtn.addEventListener("click", ()=>{
   renderCalendar(currentMonth, headerYear);
 })
 
-let selectedDay = []
+let selectedDay = [];
+let storeDay = [];
 
 let dateBtn = document.getElementsByClassName("day");
 
@@ -87,6 +88,8 @@ function indexOfValue(arr, value) {
   }
   return -1;
 }
+
+let dateBox = document.getElementById("dateBox");
 
 const choiceHandle = () =>{
   Array.from(dateBtn).forEach((element) =>{
@@ -104,7 +107,17 @@ const choiceHandle = () =>{
         if(selectedDay.length > 2){
           selectedDay.shift();
         }
-        console.log(selectedDay)
+
+        if (selectedDay.length == 1){
+          dateBox.innerHTML = `${selectedDay[0].date}/${selectedDay[0].month}/${selectedDay[0].year}`;
+        }
+        else{
+          //reverse check
+          if(new Date(selectedDay[0].year,selectedDay[0].month,selectedDay[0].date) - new Date(selectedDay[1].year,selectedDay[1].month,selectedDay[1].date) > 0){
+            selectedDay = selectedDay.reverse()
+          }
+          dateBox.innerHTML = `${selectedDay[0].date}/${selectedDay[0].month}/${selectedDay[0].year} - ${selectedDay[1].date}/${selectedDay[1].month}/${selectedDay[1].year}`;
+        }
       })
     }
   })
