@@ -183,7 +183,6 @@ const renderCalendar = (month, year) => {
   }
   calendarElement.innerHTML = calendar;
   //pin day function()
-  
   if(storeDay.length == 2){
     let displayDays = [...storeDay];
 
@@ -193,13 +192,16 @@ const renderCalendar = (month, year) => {
     }
     let sameMonth =  displayDays[0].month == displayDays[1].month
       if(sameMonth) {
-        Array.from(dateBtn).forEach((element, index) => {
-          let isActive = parseInt(element.innerHTML) >= parseInt(displayDays[0].date) && parseInt(element.innerHTML) <= parseInt(displayDays[1].date);
-          let isInactive = element.classList.contains("inactive");
-          if (isActive && !isInactive){
-            element.classList.add("active");
-          }
-        })
+        if(currentMonth == displayDays[0].month){
+          Array.from(dateBtn).forEach((element, index) => {
+            let isActive = parseInt(element.innerHTML) >= parseInt(displayDays[0].date) && parseInt(element.innerHTML) <= parseInt(displayDays[1].date);
+            console.log(isActive)
+            let isInactive = element.classList.contains("inactive");
+            if (isActive && !isInactive){
+              element.classList.add("active");
+            }
+          })
+        }
       } else{
         if(displayDays[0].month == currentMonth){
           if(displayDays[1].month > displayDays[0].month){
@@ -238,7 +240,7 @@ const renderCalendar = (month, year) => {
   } else if (storeDay.length == 1){
     Array.from(dateBtn).forEach((element, index) => {
       let isChecked = element.innerHTML == storeDay[0].date && currentMonth == storeDay[0].month;
-      if(isChecked && element.classList.contains("inactive")){
+      if(isChecked && !element.classList.contains("inactive")){
         element.classList.add("active")
       }
     })
@@ -277,6 +279,9 @@ previousMonthBtn.addEventListener("click", ()=>{
 const handleClear = () => {
   storeDay = [];
   dateBox.innerHTML = "";
+  Array.from(dateBtn).forEach((element, index) => {
+    element.classList.remove("active");
+  })
 }
 
 let dateBox = document.getElementById("dateBox");
