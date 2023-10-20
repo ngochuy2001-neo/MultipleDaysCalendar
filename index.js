@@ -40,9 +40,7 @@ function checkStorageVariable(firstDate, secondDate) {
   
   let tempFirstDate = new Date(firstDateSplit[2], firstDateSplit[1] - 1, firstDateSplit[0])
   let tempSecondDate = new Date(secondDateSplit[2], secondDateSplit[1] - 1, secondDateSplit[0])
-  console.log(tempSecondDate)
  
-  console.log(tempSecondDate > tempFirstDate)
   return tempSecondDate < tempFirstDate;
 }
 
@@ -110,6 +108,9 @@ const listingDays  = (month, year) => {
       let analyseFirstDay = tempArray[0].split("/");
       let analyseSecondDay = tempArray[1].split("/");
 
+      let firstDay = new Date(parseInt(analyseFirstDay[2]), parseInt(analyseFirstDay[1] - 1), parseInt(analyseFirstDay[0]))
+      let secondDay = new Date(parseInt(analyseSecondDay[2]), parseInt(analyseSecondDay[1] - 1), parseInt(analyseSecondDay[0]))
+
       let isSameMonth = analyseFirstDay[1] == analyseSecondDay[1];
 
       if(isSameMonth){
@@ -135,7 +136,7 @@ const listingDays  = (month, year) => {
       } else {
         let isFirstMonth = currentMonth + 1 == analyseFirstDay[1]
         let isLastMonth = currentMonth + 1 == analyseSecondDay[1]
-        let isBetween = currentMonth + 1 > analyseFirstDay[1] && currentMonth + 1 < analyseSecondDay[1]
+        let isBetween = (new Date(year, month, i)) > firstDay && (new Date(year, month, i)) < secondDay;
         if (isFirstMonth){
           let isActive = i >= analyseFirstDay[0]; 
           if(isActive){
@@ -289,8 +290,6 @@ const renderFunction = (month, year, activeDays) => {
 
     if(checkStorageVariable(displayDays[0], displayDays[1])){
       displayDays = displayDays.reverse()
-      console.log("check")
-      console.log(displayDays)
     }
     dateBox.innerHTML = `${displayDays[0]} - ${displayDays[1]}`
   } else{
