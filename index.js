@@ -13,283 +13,273 @@ const months = [
   "December"
 ];
 
-let present = new Date();
-let currentMonth = present.getMonth();
+//Element listing
+const calendarMonth = document.getElementById("calendarCurrentMonth");
+const nextMonthBtn = document.getElementById("nextMonth");
+const prevMonthBtn = document.getElementById("previousMonth");
+const dateBox = document.getElementById("dateBox");
+const clearBtn = document.getElementById("clearButton");
+const calendarElement = document.getElementById("dayList");
 
-let headerYear = present.getFullYear();
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+let activeDays = [];
 
-let headerMonth = months[currentMonth];
-let dateBtn = document.getElementsByClassName("day");
-
-let storeDay = [];
-
-function indexOfValue(arr, value) {
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i].date === value.date && arr[i].month === value.month && arr[i].year === value.year) {
-      return i;
+//Reverse function
+function checkStorageVariable(firstDate, secondDate) {
+  let firstDateSplit = firstDate.split("/");
+  let secondDateSplit = secondDate.split("/");
+  if(firstDateSplit[1] > secondDateSplit[1]){
+    return true;
+  }else if (firstDateSplit[1] < secondDateSplit[1]){
+    return false
+  }
+  else {
+    if (firstDateSplit[0] > secondDateSplit[0]){
+      return true;
+    }else{
+      return false
     }
   }
-  return -1;
 }
 
 
-const choiceHandle = () =>{
-  let selectedDay = [...storeDay];
-  Array.from(dateBtn).forEach((element, index) =>{
-    if(!element.classList.contains("inactive")){
-      element.addEventListener("click", (event) =>{
-        let dateForm =  {
-          date: event.target.innerHTML, 
-          month: currentMonth, 
-          year: headerYear,
-          fullDate: `${event.target.innerHTML}/${currentMonth+1}/${headerYear}`
-        }
+//Listing all day of month function
+const listingDays  = (month, year) => {
 
-        let index = indexOfValue(selectedDay,dateForm);
+  //Variables
 
-        if(index === -1){
-          selectedDay.push(dateForm)
-        } else {
-          element.classList.remove("active")
-          selectedDay.splice(index, 1);
-        }
-
-        if(selectedDay.length > 2){
-          selectedDay.shift();
-        }
-
-        let displayDays = [...selectedDay];
-        
-        if (displayDays.length == 1){
-          storeDay = [...selectedDay];
-          dateBox.innerHTML = `${displayDays[0].fullDate}`;
-          Array.from(dateBtn).forEach((element, index) => {
-            let isSame = element.innerHTML == displayDays[0].date && displayDays[0].month == currentMonth
-            let isInactive = element.classList.contains("inactive") 
-            if(isSame && !isInactive){
-              element.classList.add("active");
-            }
-            else{
-              element.classList.remove("active")
-            }
-            
-          })
-        } else if (displayDays.length == 2) {
-            storeDay = [...selectedDay];
-
-            if(selectedDay.length > 0){
-              let needReverse = (new Date(selectedDay[0].year, selectedDay[0].month, selectedDay[0].date) - new Date(selectedDay[1].year, selectedDay[1].month, selectedDay[1].date)) > 0;
-              if(needReverse){
-                displayDays = displayDays.reverse()
-              }
-
-              let sameMonth =  displayDays[0].month == displayDays[1].month
-              if(sameMonth) {
-                Array.from(dateBtn).forEach((element, index) => {
-                  let isActive = parseInt(element.innerHTML) >= parseInt(displayDays[0].date) && parseInt(element.innerHTML) <= parseInt(displayDays[1].date);
-                  let isInactive = element.classList.contains("inactive");
-                  if (isActive && !isInactive){
-                    element.classList.add("active");
-                  }
-                })
-              } else{
-                if(displayDays[0].month == currentMonth){
-                  if(displayDays[1].month > displayDays[0].month){
-                    let flag = false
-                    Array.from(dateBtn).forEach((element, index) => {
-                      let isFirstPin = displayDays[0].date == element.innerHTML;
-
-                      if (isFirstPin && !element.classList.contains("inactive")) {
-                        flag = true
-                      }
-
-                      if(flag){
-                        element.classList.add("active")
-                      }
-                      
-                    })
-                  }
-                } else if (displayDays[1].month == currentMonth){
-                  let flag = true
-                  Array.from(dateBtn).forEach((element, index) =>{
-                    if(flag){
-                      element.classList.add("active");
-                    }
-                    let isLastPin = displayDays[1].date == element.innerHTML;
-                    if(isLastPin){
-                      flag = false
-                    }
-                  })
-                }
-                else{
-                  Array.from(dateBtn).forEach((element, index) => {
-                    element.classList.add("active");
-                  })
-                }
-              }
-            }
-          dateBox.innerHTML = `${displayDays[0].fullDate} - ${displayDays[1].fullDate}`;
-        } else{
-          Array.from(dateBtn).forEach((element,index) => {
-            element.classList.remove("active");
-          })
-          storeDay = []
-          dateBox.innerHTML = "";
-        }
-        
-      })
-    } else{
-      if (index < 6){
-        element.addEventListener("click", (event) => {
-          currentMonth -= 1;
-          if (currentMonth < 0){
-            currentMonth = 11;
-            headerYear -= 1;
-          }
-          renderCalendar(currentMonth, headerYear);
-        })
-      }
-      else{
-        element.addEventListener("click", (event) => {
-          currentMonth += 1;
-          if (currentMonth > 11){
-            currentMonth = 0;
-            headerYear += 1;
-          }
-          renderCalendar(currentMonth, headerYear);
-        })
-      }
-    }
-  })
-}
-
-//Main part calendar function
-const renderCalendar = (month, year) => {
-  let curMonthStart = new Date(year, month, 1).getDay();
-  let curMonthLast = new Date(year, month + 1, 0).getDay();
+  //Day define
+  let curMonthFirstDay = new Date(year, month, 1).getDay();
+  let curMonthLastDay = new Date(year, month + 1, 0).getDay();
   let curMonthLastDate = new Date(year, month + 1, 0).getDate();
   let prevMonthLastDate = new Date(year, month, 0).getDate();
-  document.getElementById("calendarCurrentDate").innerHTML = months[month] + ", " + year;
-  let calendar = ''
-  let calendarElement = document.getElementById("dayList"); 
-  for (let i = curMonthStart; i > 0; i --){
-    calendar += `<li class="day inactive">${prevMonthLastDate - i + 1}</li>`
-  }
-  for (let i = 1; i <= curMonthLastDate; i++){
-    calendar += `<li class="day">${i}</li>`;
-  }
-  for (let i = curMonthLast; i < 6; i++){
-    calendar += `<li class="day inactive">${i - curMonthLast + 1}</li>`
-  }
-  calendarElement.innerHTML = calendar;
-  //pin day function()
-  if(storeDay.length == 2){
-    let displayDays = [...storeDay];
+  
+  let isFirstMonth = month == 0
+  let isLastMonth = month == 11
+  let dayList = [];
+  for (let i = curMonthFirstDay; i > 0; i--){
 
-    let needReverse = (new Date(displayDays[0].year, displayDays[0].month, displayDays[0].date) - new Date(displayDays[1].year, displayDays[1].month, displayDays[1].date)) > 0;
-    if(needReverse){
-      displayDays = displayDays.reverse()
+    if(isLastMonth){
+      dayList.push({
+        date: prevMonthLastDate - i + 1,
+        month: 11,
+        year: year,
+        fullDate: `${prevMonthLastDate - i + 1}/12/${year-1}`,
+        state: 'inactive'
+      })
+    } else{
+      dayList.push({
+        date: prevMonthLastDate - i + 1,
+        month: month - 1,
+        year: year,
+        fullDate: `${prevMonthLastDate - i + 1}/${month}/${year}`,
+        state: 'inactive'
+      })
     }
-    let sameMonth =  displayDays[0].month == displayDays[1].month
-      if(sameMonth) {
-        if(currentMonth == displayDays[0].month){
-          Array.from(dateBtn).forEach((element, index) => {
-            let isActive = parseInt(element.innerHTML) >= parseInt(displayDays[0].date) && parseInt(element.innerHTML) <= parseInt(displayDays[1].date);
-            console.log(isActive)
-            let isInactive = element.classList.contains("inactive");
-            if (isActive && !isInactive){
-              element.classList.add("active");
-            }
+  }  
+  for (let i = 1; i <= curMonthLastDate; i++){
+    if (activeDays.length == 1){
+      let isInActiveDay = activeDays[0] == `${i}/${month + 1}/${year}`
+      if (isInActiveDay){
+          dayList.push({
+            date: i,
+            month: month,
+            year: year,
+            fullDate: `${i}/${month+1}/${year}`,
+            state: 'active'
+          })
+      }else{
+        dayList.push({
+          date: i,
+          month: month,
+          year: year,
+          fullDate: `${i}/${month+1}/${year}`,
+          state: ''
+        })
+      }
+    } else if (activeDays.length == 2){
+
+      let tempArray = [...activeDays]
+      if (checkStorageVariable(tempArray[0], tempArray[1])){
+        tempArray = tempArray.reverse()
+      }
+      let analyseFirstDay = tempArray[0].split("/");
+      let analyseSecondDay = tempArray[1].split("/");
+
+      let isSameMonth = analyseFirstDay[1] == analyseSecondDay[1];
+
+      if(isSameMonth){
+        let isCurrentMonth = analyseFirstDay[1] == month + 1;
+        if(isCurrentMonth){
+          let isActive = i >= analyseFirstDay[0] && i <= analyseSecondDay[0];
+          dayList.push({
+            date: i,
+            month: month,
+            year: year,
+            fullDate: `${i}/${month+1}/${year}`,
+            state: isActive? "active":"normal"
           })
         }
-      } else{
-        if(displayDays[0].month == currentMonth){
-          if(displayDays[1].month > displayDays[0].month){
-            let flag = false
-            Array.from(dateBtn).forEach((element, index) => {
-              let isFirstPin = displayDays[0].date == element.innerHTML;
-
-              if (isFirstPin && !element.classList.contains("inactive")) {
-                flag = true
-              }
-
-              if(flag){
-                element.classList.add("active")
-              }
-              
+      } else {
+        let isFirstMonth = currentMonth + 1 == analyseFirstDay[1]
+        let isLastMonth = currentMonth + 1 == analyseSecondDay[1]
+        if (isFirstMonth){
+          let isActive = i >= analyseFirstDay[0]; 
+          if(isActive){
+            dayList.push({
+              date: i,
+              month: month,
+              year: year,
+              fullDate: `${i}/${month+1}/${year}`,
+              state: "active"
             })
           }
-        } else if (displayDays[1].month == currentMonth){
-          let flag = true
-          Array.from(dateBtn).forEach((element, index) =>{
-            if(flag){
-              element.classList.add("active");
-            }
-            let isLastPin = displayDays[1].date == element.innerHTML;
-            if(isLastPin){
-              flag = false
-            }
-          })
+          else{
+            dayList.push({
+              date:i,
+              month: month,
+              year: year,
+              fullDate: `${i}/${month+1}/${year}`,
+              state: '',
+            })
+          }
+        } else if (isLastMonth) {
+          let isActive = i <= analyseSecondDay[0];
+          if (isActive){
+            dayList.push({
+              date: i,
+              month: month,
+              year: year,
+              fullDate: `${i}/${month+1}/${year}`,
+              state: "active"
+            })
+          } else{
+            dayList.push({
+              date: i,
+              month: month,
+              year: year,
+              fullDate: `${i}/${month+1}/${year}`,
+              state: ""
+            })
+          }
         } else{
-          Array.from(dateBtn).forEach((element, index) => {
-            element.classList.add("active");
-          })
+            dayList.push({
+              date: i,
+              month: month,
+              year: year,
+              fullDate: `${i}/${month+1}/${year}`,
+              state: "active"
+            })
         }
       }
+      
 
-  } else if (storeDay.length == 1){
-    Array.from(dateBtn).forEach((element, index) => {
-      let isChecked = element.innerHTML == storeDay[0].date && currentMonth == storeDay[0].month;
-      if(isChecked && !element.classList.contains("inactive")){
-        element.classList.add("active")
-      }
+    } else{
+      dayList.push({
+        date: i,
+        month: month,
+        year: year,
+        fullDate: `${i}/${month+1}/${year}`,
+        state: ''
+      })
+    }
+  }
+  for (let i = curMonthLastDay; i < 6; i++){
+    dayList.push({
+      date: i - curMonthLastDay + 1,
+      month: month + 1,
+      year: year,
+      fullDate: `${i - curMonthLastDay}/${month + 2}/${year}`,
+      state: "inactive"
     })
   }
-  choiceHandle()
+
+  return dayList;
 }
 
-renderCalendar(currentMonth, headerYear);
-
-let nextMonthBtn = document.getElementById("nextMonth");
-let previousMonthBtn = document.getElementById("previousMonth");
-
-//Button event listener
-
-//Next month
-nextMonthBtn.addEventListener("click", () => {
-  currentMonth += 1;
-  if(currentMonth > 11){
-    currentMonth = 0;
-    headerYear += 1;
+//handle click on date function
+const handleClickDate = (event) =>{
+  let datePicked = event.target.getAttribute("data-date");
+  
+  let indexExisted = activeDays.indexOf(datePicked);
+  if(indexExisted != -1){
+    activeDays.splice(indexExisted,1)
+  } else{
+    activeDays.push(datePicked)
   }
-  renderCalendar(currentMonth, headerYear);
-})
+  if(activeDays.length > 2){
+    activeDays.shift();
+  }
+  renderFunction(currentMonth, currentYear, activeDays);
+}
 
-//Previous Month
-previousMonthBtn.addEventListener("click", ()=>{
-  currentMonth -= 1;
-  if(currentMonth < 0){
+
+// Two buttons handle functions
+prevMonthBtn.addEventListener("click",(event) => {
+  let isFirstMonth = currentMonth == 0
+  if(isFirstMonth){
     currentMonth = 11;
-    headerYear -= 1;
+    currentYear--;
+  } else{
+    currentMonth--;
   }
-  renderCalendar(currentMonth, headerYear);
+  renderFunction(currentMonth, currentYear, activeDays);
 })
 
+nextMonthBtn.addEventListener("click", (event) => {
+  let isLastMonth = currentMonth == 11
+  if(isLastMonth){
+    currentMonth = 0;
+    currentYear++;
+  } else{
+    currentMonth++;
+  }
+  renderFunction(currentMonth, currentYear, activeDays)
+})
 
-const handleClear = () => {
-  storeDay = [];
+clearBtn.addEventListener("click", (event)=>{
+  activeDays = [];
   dateBox.innerHTML = "";
-  Array.from(dateBtn).forEach((element, index) => {
-    element.classList.remove("active");
+  renderFunction(currentMonth, currentYear, activeDays);
+})
+
+//RenderFunction
+
+const renderFunction = (month, year, activeDays) => {
+  calendarMonth.innerHTML = `${months[month]}, ${year}`;
+  calendarElement.innerHTML = "";
+
+  let dayList = listingDays(month, year);
+
+  let dayElements = dayList.map((data, index) =>{
+    isInActive = data.state == "inactive"
+    isActive = data.state == "active"
+    return `<li class="day ${isActive? "active" : ""} ${isInActive? "inactive" : ""}" data-date="${data.fullDate}">${data.date}</li>`
+  })
+  dayElements.forEach((element) => {
+    calendarElement.innerHTML += element;
+  })
+  
+  let displayDays = [...activeDays]
+
+  if (displayDays.length == 1){
+    dateBox.innerHTML = activeDays
+  } else if (displayDays.length == 2){
+
+    if(checkStorageVariable(displayDays[0], displayDays[1])){
+      displayDays = displayDays.reverse()
+    }
+    dateBox.innerHTML = `${displayDays[0]} - ${displayDays[1]}`
+  } else{
+    dateBox.innerHTML = "";
+  }
+
+  // Add event to each day
+  const datePick = document.getElementsByClassName("day")
+  Array.from(datePick).forEach((element, index)=>{
+    element.addEventListener("click", handleClickDate)
   })
 }
 
-let dateBox = document.getElementById("dateBox");
-
-let clearClick = document.getElementById("clearButton");
-
-clearClick.addEventListener("click", (event) => {
-  handleClear();
-})
-choiceHandle()
-
+renderFunction(currentMonth, currentYear, activeDays)
