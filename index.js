@@ -61,7 +61,7 @@ const listingDays  = (month, year) => {
   let dayList = [];
   for (let i = curMonthFirstDay; i > 0; i--){
 
-    if(isLastMonth){
+    if(isFirstMonth ){
       dayList.push({
         date: prevMonthLastDate - i + 1,
         month: 11,
@@ -207,13 +207,23 @@ const listingDays  = (month, year) => {
     }
   }
   for (let i = curMonthLastDay; i < 6; i++){
-    dayList.push({
-      date: i - curMonthLastDay + 1,
-      month: month + 1,
-      year: year,
-      fullDate: `${i - curMonthLastDay}/${month + 2}/${year}`,
-      state: "inactive"
-    })
+    if (isLastMonth) {
+      dayList.push({
+        date: i - curMonthLastDay + 1,
+        month: 1,
+        year: year + 1,
+        fullDate: `${i - curMonthLastDay + 1}/1/${year+1}`,
+        state: "inactive"
+      })
+    }else{
+      dayList.push({
+        date: i - curMonthLastDay + 1,
+        month: month + 1,
+        year: year,
+        fullDate: `${i - curMonthLastDay + 1}/${month + 2}/${year}`,
+        state: "inactive"
+      })
+    }
   }
 
   return dayList;
