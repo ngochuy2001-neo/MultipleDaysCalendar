@@ -38,18 +38,12 @@ function checkStorageVariable(firstDate, secondDate) {
     return parseInt(data)
   })
   
-  if(firstDateSplit[2] > secondDateSplit[2]){
-    return true;
-  }else{
-    if(firstDateSplit[1] > secondDateSplit[1]){
-      return true;
-    }else{
-      if(firstDateSplit[0] > secondDateSplit[0]){
-        return true;
-      }
-    }
-  }
-  return false;
+  let tempFirstDate = new Date(firstDateSplit[2], firstDateSplit[1] - 1, firstDateSplit[0])
+  let tempSecondDate = new Date(secondDateSplit[2], secondDateSplit[1] - 1, secondDateSplit[0])
+  console.log(tempSecondDate)
+ 
+  console.log(tempSecondDate > tempFirstDate)
+  return tempSecondDate < tempFirstDate;
 }
 
 
@@ -110,7 +104,6 @@ const listingDays  = (month, year) => {
     } else if (activeDays.length == 2){
 
       let tempArray = [...activeDays]
-      console.log(checkStorageVariable(tempArray[0], tempArray[1]))
       if (checkStorageVariable(tempArray[0], tempArray[1])){
         tempArray = tempArray.reverse()
       }
@@ -128,12 +121,21 @@ const listingDays  = (month, year) => {
             month: month,
             year: year,
             fullDate: `${i}/${month+1}/${year}`,
-            state: isActive? "active":"normal"
+            state: isActive? "active":""
+          })
+        } else{
+          dayList.push({
+            date: i,
+            month: month,
+            year: year,
+            fullDate: `${i}/${month+1}/${year}`,
+            state:  ""
           })
         }
       } else {
         let isFirstMonth = currentMonth + 1 == analyseFirstDay[1]
         let isLastMonth = currentMonth + 1 == analyseSecondDay[1]
+        let isBetween = currentMonth + 1 > analyseFirstDay[1] && currentMonth + 1 < analyseSecondDay[1]
         if (isFirstMonth){
           let isActive = i >= analyseFirstDay[0]; 
           if(isActive){
@@ -173,13 +175,21 @@ const listingDays  = (month, year) => {
               state: ""
             })
           }
-        } else{
+        } else if(isBetween){
             dayList.push({
               date: i,
               month: month,
               year: year,
               fullDate: `${i}/${month+1}/${year}`,
               state: "active"
+            })
+        } else{
+            dayList.push({
+              date: i,
+              month: month,
+              year: year,
+              fullDate: `${i}/${month+1}/${year}`,
+              state: ""
             })
         }
       }
@@ -279,6 +289,8 @@ const renderFunction = (month, year, activeDays) => {
 
     if(checkStorageVariable(displayDays[0], displayDays[1])){
       displayDays = displayDays.reverse()
+      console.log("check")
+      console.log(displayDays)
     }
     dateBox.innerHTML = `${displayDays[0]} - ${displayDays[1]}`
   } else{
