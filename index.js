@@ -29,18 +29,27 @@ let activeDays = [];
 function checkStorageVariable(firstDate, secondDate) {
   let firstDateSplit = firstDate.split("/");
   let secondDateSplit = secondDate.split("/");
-  if(firstDateSplit[1] > secondDateSplit[1]){
+
+  firstDateSplit = firstDateSplit.map((data,index) => {
+    return parseInt(data)
+  })
+  
+  secondDateSplit = secondDateSplit.map((data,index) => {
+    return parseInt(data)
+  })
+  
+  if(firstDateSplit[2] > secondDateSplit[2]){
     return true;
-  }else if (firstDateSplit[1] < secondDateSplit[1]){
-    return false
-  }
-  else {
-    if (firstDateSplit[0] > secondDateSplit[0]){
+  }else{
+    if(firstDateSplit[1] > secondDateSplit[1]){
       return true;
     }else{
-      return false
+      if(firstDateSplit[0] > secondDateSplit[0]){
+        return true;
+      }
     }
   }
+  return false;
 }
 
 
@@ -101,6 +110,7 @@ const listingDays  = (month, year) => {
     } else if (activeDays.length == 2){
 
       let tempArray = [...activeDays]
+      console.log(checkStorageVariable(tempArray[0], tempArray[1]))
       if (checkStorageVariable(tempArray[0], tempArray[1])){
         tempArray = tempArray.reverse()
       }
